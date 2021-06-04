@@ -7,8 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ejercicio.domain.User;
+import com.example.ejercicio.dto.ResponseDTO;
 import com.example.ejercicio.dto.UserResponseDTO;
 import com.example.ejercicio.service.UserService;
 
@@ -53,16 +57,46 @@ public class UserController {
 	@PostMapping("/add")
 	public ResponseEntity<UserResponseDTO> addUser(@RequestBody User user,
 			@RequestHeader("Authorization") String token) {
-		log.info("Usuario " + user.getUserName() + " con Bearer: " + token.substring(7));
+		log.info("Usuario {} con Bearer: {}", user.getUserName(), token.substring(7));
 		user.setToken(token.substring(7));
 		UserResponseDTO UserResponseDTO = userService.addUser(user);
 		if (UserResponseDTO.getMessage().isEmpty()) {
-			log.info("Usuario agregado exitosamente.");
 			return new ResponseEntity<>(UserResponseDTO, HttpStatus.OK);
 		} else {
-			log.warn("No se pudo agregar el usuario");
 			return new ResponseEntity<>(UserResponseDTO, HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	
+	/**
+	 * Elimina un usuario.
+	 * 
+	 * @param id
+	 * @return ResponseEntity<ResponseDTO>
+	 */
+	@DeleteMapping("/del/{id}")
+	public ResponseEntity<ResponseDTO> delUser(@PathVariable Integer id) {
+        if (userService.delUser(id)) {
+        	return new ResponseEntity<>(new ResponseDTO("Usuario eliminado correctamente"), HttpStatus.OK);
+        } else {
+        	return new ResponseEntity<>(new ResponseDTO("Usuario no existe"), HttpStatus.BAD_REQUEST);
+        }
+	}    
+	
+	/**
+	 * Actualiza un usuario.
+	 * 
+	 * @param user
+	 * @return ResponseEntity<ResponseDTO>
+	 */
+	@PutMapping("/upd")
+	public ResponseEntity<UserResponseDTO> updUser(@RequestBody User user) {
+		UserResponseDTO UserResponseDTO = userService.updUser(user);
+		if (UserResponseDTO.getMessage().isEmpty()) {
+			return new ResponseEntity<>(UserResponseDTO, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(UserResponseDTO, HttpStatus.BAD_REQUEST);
+		}
+	} 
 
 }

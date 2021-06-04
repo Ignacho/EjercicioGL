@@ -1,6 +1,7 @@
 package com.example.ejercicio.service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +42,7 @@ public class UserService {
 	}
 
 	/**
-	 * Envía al controller el UserResponseDTO a devolver.
+	 * Agrega un usuario.
 	 * 
 	 * @param user
 	 * @return UserResponseDTO
@@ -49,12 +50,64 @@ public class UserService {
 	public UserResponseDTO addUser(User user) {
 		if (mailValido(user.getEmail())) {
 			log.info("Mail válido");
-			userRepository.save(user);
+			try {
+				userRepository.save(user);
+				log.info("Usuario agregado exitosamente.");
+			} catch (Exception ex) {
+				log.error("Error al agregar usuario", ex);
+				return userResponseMapper.fromUserTOUserResponseDTO(new User(), "Error al agregar usuario");
+			}
 			return userResponseMapper.fromUserTOUserResponseDTO(user, "");
 		} else {
 			log.info("Mail inválido");
-			return userResponseMapper.fromUserTOUserResponseDTO(new User(), "invalid email");
+			return userResponseMapper.fromUserTOUserResponseDTO(new User(), "Invalid email");
 		}
+	}
+	
+	/**
+	 * Elimina un usuario.
+	 * 
+	 * @param id
+	 * @return boolean
+	 */
+	public boolean delUser(Integer id) {
+		try {
+			userRepository.deleteById(id);
+			log.info("Usuario: {} eliminado correctamente", id);
+	        return true;
+	    } catch (Exception ex) {
+	        log.warn("Error al eliminar el usuario: {}", id, ex);
+	    	return false;
+	    }
+	}
+	
+	/**
+	 * Actualiza un usuario.
+	 * 
+	 * @param user
+	 * @return UserResponseDTO
+	 */
+	public UserResponseDTO updUser(User user) {
+		try {
+			User currentUser = userRepository.getById(user.getId());
+		    if (Objects.nonNull(user.getUserName()))
+		    	currentUser.setUserName(user.getUserName());
+		    
+		    if (Objects.nonNull(user.getPassword()))
+		    	currentUser.setPassword(user.getPassword());
+		    
+		    if (Objects.nonNull(user.getEmail()))
+		    	currentUser.setEmail(user.getEmail());
+		    
+		    currentUser.setPhones(user.getPhones());
+		    
+		    User userUpd = userRepository.save(currentUser);
+		    log.info("Usuario: {} actualizado exitosamente", user.getUserName());
+	        return userResponseMapper.fromUserTOUserResponseDTO(userUpd, "");
+	    } catch (Exception ex) {
+	        log.warn("Usuario: {} a actualizar no existe", user.getUserName());
+	        return userResponseMapper.fromUserTOUserResponseDTO(user, "No se pudo actualizar el usuario");
+	    }
 	}
 
 	/**
