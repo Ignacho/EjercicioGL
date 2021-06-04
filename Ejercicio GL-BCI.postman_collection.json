@@ -1,0 +1,161 @@
+{
+	"info": {
+		"_postman_id": "2cc17727-db0d-4375-9da4-2ad93106d0d5",
+		"name": "Ejercicio GL-BCI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Obtener usuarios",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpZ25hY2lvIiwiZXhwIjoxNjIyNjE5OTgwLCJpYXQiOjE2MjI1ODM5ODB9.xFqzgd16mh6GfrZ1HaE5kzYckW5O6ox2bKa1EcFijU8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/users/all",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar usuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Ignacio\",\r\n  \"email\": \"ignachobarberis@gmail.com\",\r\n  \"password\": \"123\",\r\n  \"phones\": [\r\n    {\r\n      \"number\": \"22315297071\",\r\n      \"citycode\": \"MDP\",\r\n      \"countrycode\": \"AR\"\r\n    },\r\n    {\r\n      \"number\": \"22315297072\",\r\n      \"citycode\": \"MDP2\",\r\n      \"countrycode\": \"AR2\"\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/users/add",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Autenticación",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userName\" : \"ignacio\",\n    \"password\" : \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/authenticate",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar usuario",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpZ25hY2lvIiwiZXhwIjoxNjIyNzI2MzY4LCJpYXQiOjE2MjI2OTAzNjh9.povh6g0hf2bfo9oSiw12K8iMhRMNtvJJ19q9nmGhFU8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/users/del/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"del",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actulizar usuario",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpZ25hY2lvIiwiZXhwIjoxNjIyNzk2OTkxLCJpYXQiOjE2MjI3NjA5OTF9.iy9mEgbaCiSevZOF3g3kmNpPFZnQCJ4D1kukR7GrSpM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"id\":2,  \n  \"email\": \"ignachobarberis2@gmail.com\",\n  \"password\": \"2\",\n  \"phones\": [\n    {\n      \"number\": \"2\",\n      \"citycode\": \"MDP22\",\n      \"countrycode\": \"AR22\"\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/users/upd",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"upd"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
