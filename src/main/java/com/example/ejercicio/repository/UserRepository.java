@@ -15,4 +15,6 @@ import com.example.ejercicio.domain.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 	User findByUserName(String username);
+	
+	User findByEmail(String email);
 }

@@ -2,16 +2,17 @@ package com.example.ejercicio.service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.example.ejercicio.domain.User;
 import com.example.ejercicio.dto.UserResponseDTO;
+import com.example.ejercicio.exception.ExistingMailException;
 import com.example.ejercicio.mapper.UserResponseMapper;
 import com.example.ejercicio.repository.UserRepository;
 
@@ -46,41 +47,24 @@ public class UserService {
 	 * 
 	 * @param user
 	 * @return UserResponseDTO
+	 * @throws Exception
 	 */
-	public UserResponseDTO addUser(User user) {
-		if (mailValido(user.getEmail())) {
-			log.info("Mail válido");
+	public UserResponseDTO addUser(User user) throws Exception {
+		if (Objects.nonNull(userRepository.findByEmail(user.getEmail()))) {
+			log.info("El correo ya registrado");
+			throw new ExistingMailException("El correo ya registrado");
+		} else {
 			try {
 				userRepository.save(user);
 				log.info("Usuario agregado exitosamente.");
-			} catch (Exception ex) {
+				return userResponseMapper.fromUserTOUserResponseDTO(user);
+			} catch (RuntimeException ex) {
 				log.error("Error al agregar usuario", ex);
-				return userResponseMapper.fromUserTOUserResponseDTO(new User(), "Error al agregar usuario");
+				throw new RuntimeException("Error al agregar usuario");
 			}
-			return userResponseMapper.fromUserTOUserResponseDTO(user, "");
-		} else {
-			log.info("Mail inválido");
-			return userResponseMapper.fromUserTOUserResponseDTO(new User(), "Invalid email");
 		}
 	}
-	
-	/**
-	 * Elimina un usuario.
-	 * 
-	 * @param id
-	 * @return boolean
-	 */
-	public boolean delUser(Integer id) {
-		try {
-			userRepository.deleteById(id);
-			log.info("Usuario: {} eliminado correctamente", id);
-	        return true;
-	    } catch (Exception ex) {
-	        log.warn("Error al eliminar el usuario: {}", id, ex);
-	    	return false;
-	    }
-	}
-	
+
 	/**
 	 * Actualiza un usuario.
 	 * 
@@ -88,42 +72,56 @@ public class UserService {
 	 * @return UserResponseDTO
 	 */
 	public UserResponseDTO updUser(User user) {
-		try {
-			User currentUser = userRepository.getById(user.getId());
-		    if (Objects.nonNull(user.getUserName()))
-		    	currentUser.setUserName(user.getUserName());
-		    
-		    if (Objects.nonNull(user.getPassword()))
-		    	currentUser.setPassword(user.getPassword());
-		    
-		    if (Objects.nonNull(user.getEmail()))
-		    	currentUser.setEmail(user.getEmail());
-		    
-		    currentUser.setPhones(user.getPhones());
-		    
-		    User userUpd = userRepository.save(currentUser);
-		    log.info("Usuario: {} actualizado exitosamente", user.getUserName());
-	        return userResponseMapper.fromUserTOUserResponseDTO(userUpd, "");
-	    } catch (Exception ex) {
-	        log.warn("Usuario: {} a actualizar no existe", user.getUserName());
-	        return userResponseMapper.fromUserTOUserResponseDTO(user, "No se pudo actualizar el usuario");
-	    }
+		if (Objects.isNull(user) || Objects.isNull(user.getId())) {
+			log.error("Falta ingresar el campo id de usuario");
+			throw new RuntimeException("Ingrese un id de usuario");
+		} else {
+			Optional<User> userOpt = userRepository.findById(user.getId());
+			if (!userOpt.isPresent()) {
+				log.error("El id de usuario no se encuentra en el sistema");
+				throw new RuntimeException("El usuario " + user.getId() + " no se encuentra en el sistema");
+			} else {
+				try {
+					User currentUser = userOpt.get();
+					if (Objects.nonNull(user.getUserName()))
+						currentUser.setUserName(user.getUserName());
+
+					if (Objects.nonNull(user.getPassword()))
+						currentUser.setPassword(user.getPassword());
+
+					if (Objects.nonNull(user.getEmail()))
+						currentUser.setEmail(user.getEmail());
+
+					currentUser.setPhones(user.getPhones());
+
+					User userUpd = userRepository.save(currentUser);
+					log.info("Usuario: {} actualizado exitosamente", user.getUserName());
+					return userResponseMapper.fromUserTOUserResponseDTO(userUpd);
+				} catch (Exception ex) {
+					log.error("Error al actualzar usuario: {}", user.getUserName());
+					throw new RuntimeException("Error al actualzar usuario");
+				}
+			}
+		}
 	}
 
 	/**
-	 * Valida que el mail sea válido mediante una RegExr
+	 * Elimina un usuario.
 	 * 
-	 * @param email
-	 * @return Boolean
+	 * @param id
+	 * @return void
 	 */
-	public static Boolean mailValido(String email) {
-		String PATTERN_EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-		Pattern pattern = Pattern.compile(PATTERN_EMAIL);
-
-		Matcher matcher = pattern.matcher(email);
-		return matcher.matches();
-
+	public void delUser(Integer id) {
+		try {
+			userRepository.deleteById(id);
+			log.info("Usuario: {} eliminado correctamente", id);
+		} catch (EmptyResultDataAccessException ne) {
+			log.error("Usuario: {} inexistente", id, ne);
+			throw new EmptyResultDataAccessException("Usuario inexistente", id);
+		} catch (Exception ex) {
+			log.error("Error al eliminar el usuario: {}", id, ex);
+			throw new RuntimeException("Error al eliminar usuario");
+		}
 	}
 
 }

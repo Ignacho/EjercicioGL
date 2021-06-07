@@ -15,7 +15,7 @@ import com.example.ejercicio.dto.UserResponseDTO;
 @Component
 public class UserResponseMapper {
 
-	public UserResponseDTO fromUserTOUserResponseDTO(User user, String message) {
+	public UserResponseDTO fromUserTOUserResponseDTO(User user) {
 		UserResponseDTO userResponseDTO = new UserResponseDTO();
 		userResponseDTO.setId(user.getId());
 		userResponseDTO.setCreated(user.getCreated());
@@ -23,7 +23,6 @@ public class UserResponseMapper {
 		userResponseDTO.setLastLogin(user.getLastLogin());
 		userResponseDTO.setToken(user.getToken());
 		userResponseDTO.setIsActive(user.getIsActive());
-		userResponseDTO.setMessage(message);
 
 		return userResponseDTO;
 	}

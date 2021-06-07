@@ -2,12 +2,10 @@ package com.example.ejercicio.dto;
 
 import java.sql.Timestamp;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * DTO encargado de informar los datos requeridos en el response.
@@ -17,9 +15,7 @@ import lombok.NoArgsConstructor;
  * @version 1.0
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserResponseDTO {
 
 	private Integer id;
@@ -28,5 +24,4 @@ public class UserResponseDTO {
 	private Timestamp lastLogin;
 	private String token;
 	private Boolean isActive;
-	private String message;
 }

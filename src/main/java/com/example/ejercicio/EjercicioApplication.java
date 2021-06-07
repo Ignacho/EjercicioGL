@@ -24,7 +24,7 @@ public class EjercicioApplication {
 	@PostConstruct
 	public void initUsers() {
 	    List<User> users = Stream.of(
-				new User(1, "ignacio", "password", "ignachobarberis@gmail.com", new ArrayList<Phone>(),
+				new User(1, "ignacio", "P4ssw0rd", "ignachobarberis@gmail.com", new ArrayList<Phone>(),
 						new Timestamp(System.currentTimeMillis()), null, new Timestamp(System.currentTimeMillis()),
 						null, null)
 	    ).collect(Collectors.toList());

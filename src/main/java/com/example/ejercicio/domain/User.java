@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -37,17 +40,28 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+
 	@JsonProperty("name")
 	private String userName;
+
+	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9].*?[0-9]).{4,}$", message = "El formato del password no es correcto (una mayúscula, letras minúsculas, y dos números)")
 	private String password;
+
+	@NotNull(message = "Se tiene que ingresar el email")
+	@NotBlank(message = "El email no puede estar vacío")
+	@Pattern(regexp = "^([\\w\\.\\-]+)@([\\w\\-]+)((.(\\w){2,3}))$", message = "Email inválido")
 	private String email;
+
 	@OneToMany(targetEntity = Phone.class, cascade = CascadeType.ALL)
 	@JoinColumn(name = "userid", referencedColumnName = "id")
 	private List<Phone> phones;
+
 	@CreationTimestamp
 	private Timestamp created;
+
 	@UpdateTimestamp
 	private Timestamp modifier;
+
 	private Timestamp lastLogin;
 	private String token;
 	private Boolean isActive;
