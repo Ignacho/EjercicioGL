@@ -22,7 +22,7 @@ public interface UserPhoneRepository extends JpaRepository<Phone, Integer> {
 
 	@Transactional
 	@Modifying
-	@Query(value = "DELETE FROM PHONES WHERE id = :id", nativeQuery = true)
+	@Query(value = "DELETE FROM PHONES WHERE user_id = :id", nativeQuery = true)
 	void deleteByUserId(@Param("id") Integer id);
 
 	List<Phone> findByUserId(@Param("userId") Integer userId);
