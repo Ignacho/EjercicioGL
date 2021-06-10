@@ -25,4 +25,5 @@ public class Phone {
 	private String number;
 	private String citycode;
 	private String countrycode;
+	private Integer userId;
 }

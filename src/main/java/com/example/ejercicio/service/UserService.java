@@ -1,10 +1,13 @@
 package com.example.ejercicio.service;
 
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
+import com.example.ejercicio.domain.Phone;
+import com.example.ejercicio.domain.User;
+import com.example.ejercicio.dto.UserResponseDTO;
+import com.example.ejercicio.exception.ExistingMailException;
+import com.example.ejercicio.mapper.UserMapper;
+import com.example.ejercicio.repository.UserPhoneRepository;
+import com.example.ejercicio.repository.UserRepository;
+import jdk.nashorn.internal.objects.NativeArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +15,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.ejercicio.domain.User;
-import com.example.ejercicio.dto.UserResponseDTO;
-import com.example.ejercicio.exception.ExistingMailException;
-import com.example.ejercicio.mapper.UserMapper;
-import com.example.ejercicio.repository.UserRepository;
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Se encarga de la lógica de la gestión del User.
@@ -31,6 +33,9 @@ public class UserService {
 
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	UserPhoneRepository userPhoneRepository;
 
 	@Autowired
 	UserMapper userMapper;
@@ -101,8 +106,13 @@ public class UserService {
 					if (Objects.nonNull(user.isActive()))
 						currentUser.setActive(user.isActive());
 
+					List<Phone> listPhones = userPhoneRepository.findByUserId(user.getId());
+					if (!listPhones.isEmpty()) {
+						log.info("Teléfono eliminados {}", listPhones.toString());
+						userPhoneRepository.deleteByUserId(user.getId());
+					}
+					currentUser.getPhones().clear();
 					currentUser.setPhones(user.getPhones());
-
 					User userUpd = userRepository.save(currentUser);
 					log.info("Usuario: {} actualizado exitosamente", user.getUserName());
 					return userMapper.fromUserTOUserResponseDTO(userUpd);

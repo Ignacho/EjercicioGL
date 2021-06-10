@@ -1,29 +1,18 @@
 package com.example.ejercicio.domain;
 
-import java.sql.Timestamp;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Entidad User
@@ -55,7 +44,7 @@ public class User {
 	private String email;
 
 	@OneToMany(targetEntity = Phone.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "userid", referencedColumnName = "id")
+	@JoinColumn(name = "userId", referencedColumnName = "id")
 	private List<Phone> phones;
 
 	@CreationTimestamp
@@ -68,5 +57,5 @@ public class User {
 	private Timestamp lastLogin;
 	private String token;
 
-	private boolean isActive;
+	private boolean isActive = true;
 }
