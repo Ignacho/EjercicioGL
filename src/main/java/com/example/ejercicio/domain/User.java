@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -50,6 +51,7 @@ public class User {
 	@NotNull(message = "Se tiene que ingresar el email")
 	@NotBlank(message = "El email no puede estar vacío")
 	@Pattern(regexp = "^([\\w\\.\\-]+)@([\\w\\-]+)((.(\\w){2,3}))$", message = "Email inválido")
+	@Column(updatable = false)
 	private String email;
 
 	@OneToMany(targetEntity = Phone.class, cascade = CascadeType.ALL)
@@ -62,7 +64,9 @@ public class User {
 	@UpdateTimestamp
 	private Timestamp modifier;
 
+	@JsonProperty("last_login")
 	private Timestamp lastLogin;
 	private String token;
-	private Boolean isActive;
+
+	private boolean isActive;
 }

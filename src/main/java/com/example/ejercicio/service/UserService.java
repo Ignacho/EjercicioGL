@@ -1,5 +1,6 @@
 package com.example.ejercicio.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -8,12 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.ejercicio.domain.User;
 import com.example.ejercicio.dto.UserResponseDTO;
 import com.example.ejercicio.exception.ExistingMailException;
-import com.example.ejercicio.mapper.UserResponseMapper;
+import com.example.ejercicio.mapper.UserMapper;
 import com.example.ejercicio.repository.UserRepository;
 
 /**
@@ -31,7 +33,10 @@ public class UserService {
 	UserRepository userRepository;
 
 	@Autowired
-	UserResponseMapper userResponseMapper;
+	UserMapper userMapper;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	/**
 	 * Envía al controller todos los usuarios cargados.
@@ -55,9 +60,10 @@ public class UserService {
 			throw new ExistingMailException("El correo ya registrado");
 		} else {
 			try {
+				user.setPassword(passwordEncoder.encode(user.getPassword()));
 				userRepository.save(user);
 				log.info("Usuario agregado exitosamente.");
-				return userResponseMapper.fromUserTOUserResponseDTO(user);
+				return userMapper.fromUserTOUserResponseDTO(user);
 			} catch (RuntimeException ex) {
 				log.error("Error al agregar usuario", ex);
 				throw new RuntimeException("Error al agregar usuario");
@@ -87,16 +93,19 @@ public class UserService {
 						currentUser.setUserName(user.getUserName());
 
 					if (Objects.nonNull(user.getPassword()))
-						currentUser.setPassword(user.getPassword());
+						currentUser.setPassword(passwordEncoder.encode(user.getPassword()));
 
 					if (Objects.nonNull(user.getEmail()))
 						currentUser.setEmail(user.getEmail());
+
+					if (Objects.nonNull(user.isActive()))
+						currentUser.setActive(user.isActive());
 
 					currentUser.setPhones(user.getPhones());
 
 					User userUpd = userRepository.save(currentUser);
 					log.info("Usuario: {} actualizado exitosamente", user.getUserName());
-					return userResponseMapper.fromUserTOUserResponseDTO(userUpd);
+					return userMapper.fromUserTOUserResponseDTO(userUpd);
 				} catch (Exception ex) {
 					log.error("Error al actualzar usuario: {}", user.getUserName());
 					throw new RuntimeException("Error al actualzar usuario");
@@ -123,5 +132,14 @@ public class UserService {
 			throw new RuntimeException("Error al eliminar usuario");
 		}
 	}
+
+	public User findByEmail(String email) {
+		return userRepository.findByEmail(email);
+	}
+	
+	public void updLastLogin(Integer id, Timestamp lastLogin) {
+		userRepository.updateUserLastLogin(id, lastLogin);
+	}
+		
 
 }

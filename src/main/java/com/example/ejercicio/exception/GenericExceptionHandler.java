@@ -12,6 +12,14 @@ import com.example.ejercicio.dto.ResponseDTO;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
+/**
+ * Se encarga de nuclear el manejo de las excepciones de los endpoints en esta
+ * clase.
+ * 
+ * @author Ignacio Barberis
+ * @since 09/06/2021
+ * @version 1.0
+ */
 @ControllerAdvice
 public class GenericExceptionHandler {
 	private static final Logger log = LogManager.getLogger(GenericExceptionHandler.class);

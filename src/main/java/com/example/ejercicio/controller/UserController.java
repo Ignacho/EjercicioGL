@@ -38,7 +38,7 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
-
+	
 	/**
 	 * Obtiene todos los usuarios cargados.
 	 * 
@@ -66,6 +66,9 @@ public class UserController {
 			return new ResponseEntity<>(userService.addUser(user), HttpStatus.OK);
 		} catch (ExistingMailException ex) {
 			throw new ExistingMailException(ex.getMessage());
+		} catch (RuntimeException ex) {
+			log.error("Error al agregar usuario", ex);
+			throw new RuntimeException("Error al agregar usuario");
 		}
 	}
 
