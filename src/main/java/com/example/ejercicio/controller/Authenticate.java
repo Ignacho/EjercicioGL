@@ -25,10 +25,10 @@ import java.util.Objects;
 @Slf4j
 public class Authenticate {
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 	@Autowired
-	UserMapper userMapper;
+	private UserMapper userMapper;
 
 	@Autowired
 	private JwtUtil jwtUtil;

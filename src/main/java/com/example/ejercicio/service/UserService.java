@@ -31,13 +31,13 @@ import java.util.Optional;
 @Slf4j
 public class UserService {
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 
 	@Autowired
-	UserPhoneRepository userPhoneRepository;
+	private UserPhoneRepository userPhoneRepository;
 
 	@Autowired
-	UserMapper userMapper;
+	private UserMapper userMapper;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
