@@ -1,3 +1,4 @@
+package com.example.ejercicio.service
 ;
 
 import spock.lang.Specification;
@@ -18,7 +19,18 @@ class Test extends Specification {
         def cadenaInvertida = miCadena.reverse()
 
         then: 'se invierte correctamente'              // 5
-        cadenaInvertida == 'vedatebneG aloH'
+        cadenaInvertida == 'vedatebneG aloH1'
+    }
+
+    void 'invertir una cadena de texto2'() {            // 2
+        given: 'una cadena de text'                    // 3
+        def miCadena = '123'
+
+        when: 'la invertimos'                          // 4
+        def cadenaInvertida = miCadena.reverse()
+
+        then: 'se invierte correctamente'              // 5
+        cadenaInvertida == '321'
     }
 }
 

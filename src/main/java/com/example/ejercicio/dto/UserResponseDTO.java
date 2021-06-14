@@ -1,11 +1,13 @@
 package com.example.ejercicio.dto;
 
-import java.sql.Timestamp;
-
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import lombok.Data;
+import java.time.LocalDateTime;
 
 /**
  * DTO encargado de informar los datos requeridos en el response.
@@ -14,14 +16,17 @@ import lombok.Data;
  * @since 01/06/2021
  * @version 1.0
  */
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserResponseDTO {
 
 	private Integer id;
-	private Timestamp created;
-	private Timestamp modifier;
-	private Timestamp lastLogin;
+	private LocalDateTime created;
+	private LocalDateTime modifier;
+	private LocalDateTime lastLogin;
 	private String token;
 	private Boolean isActive;
 }

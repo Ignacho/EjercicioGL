@@ -2,8 +2,10 @@ package com.example.ejercicio.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,7 +13,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -21,7 +23,8 @@ import java.util.List;
  * @since 01/06/2021
  * @version 1.0
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -34,6 +37,8 @@ public class User {
 	@JsonProperty("name")
 	private String userName;
 
+	@NotNull(message = "Se tiene que ingresar el password")
+	@NotBlank(message = "El password no puede estar vacío")
 	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9].*?[0-9]).{4,}$", message = "El formato del password no es correcto (una mayúscula, letras minúsculas, y dos números)")
 	private String password;
 
@@ -48,14 +53,15 @@ public class User {
 	private List<Phone> phones;
 
 	@CreationTimestamp
-	private Timestamp created;
+	private LocalDateTime created;
 
 	@UpdateTimestamp
-	private Timestamp modifier;
+	private LocalDateTime modifier;
 
 	@JsonProperty("last_login")
-	private Timestamp lastLogin;
+	private LocalDateTime lastLogin;
 	private String token;
 
-	private boolean isActive = true;
+	@ColumnDefault("true")
+	private Boolean isActive;
 }

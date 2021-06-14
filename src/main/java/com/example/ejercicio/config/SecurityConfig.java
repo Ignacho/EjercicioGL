@@ -20,7 +20,6 @@ import com.example.ejercicio.filter.JwtFilter;
 import com.example.ejercicio.service.CustomUserDetailsService;
 
 @Configuration
-@ComponentScan(basePackages = { "com.baeldung.security" })
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 

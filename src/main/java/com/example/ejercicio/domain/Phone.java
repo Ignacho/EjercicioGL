@@ -1,12 +1,9 @@
 package com.example.ejercicio.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
-import lombok.Data;
+import javax.persistence.*;
 
 /**
  * Entidad Phone
@@ -15,7 +12,8 @@ import lombok.Data;
  * @since 01/06/2021
  * @version 1.0
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "phones")
 public class Phone {

@@ -7,9 +7,8 @@ import com.example.ejercicio.exception.ExistingMailException;
 import com.example.ejercicio.mapper.UserMapper;
 import com.example.ejercicio.repository.UserPhoneRepository;
 import com.example.ejercicio.repository.UserRepository;
-import jdk.nashorn.internal.objects.NativeArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,9 +27,9 @@ import java.util.Optional;
  * @version 1.0
  */
 @Service
+@AllArgsConstructor
+@Slf4j
 public class UserService {
-	private Logger log = LoggerFactory.getLogger(UserService.class);
-
 	@Autowired
 	UserRepository userRepository;
 
@@ -67,7 +66,7 @@ public class UserService {
 			try {
 				user.setPassword(passwordEncoder.encode(user.getPassword()));
 				userRepository.save(user);
-				log.info("Usuario agregado exitosamente.");
+				log.info("Usuario agregado con id {}", user.getId());
 				return userMapper.fromUserTOUserResponseDTO(user);
 			} catch (RuntimeException ex) {
 				log.error("Error al agregar usuario", ex);
@@ -83,7 +82,7 @@ public class UserService {
 	 * @return UserResponseDTO
 	 */
 	public UserResponseDTO updUser(User user) {
-		if (Objects.isNull(user) || Objects.isNull(user.getId())) {
+		if (Objects.isNull(user.getId())) {
 			log.error("Falta ingresar el campo id de usuario");
 			throw new RuntimeException("Ingrese un id de usuario");
 		} else {
@@ -94,17 +93,11 @@ public class UserService {
 			} else {
 				try {
 					User currentUser = userOpt.get();
-					if (Objects.nonNull(user.getUserName()))
-						currentUser.setUserName(user.getUserName());
-
-					if (Objects.nonNull(user.getPassword()))
-						currentUser.setPassword(passwordEncoder.encode(user.getPassword()));
-
-					if (Objects.nonNull(user.getEmail()))
-						currentUser.setEmail(user.getEmail());
-
-					if (Objects.nonNull(user.isActive()))
-						currentUser.setActive(user.isActive());
+					currentUser.setUserName(user.getUserName());
+					currentUser.setPassword(passwordEncoder.encode(user.getPassword()));
+					currentUser.setEmail(user.getEmail());
+					if (Objects.nonNull(user.getIsActive()))
+						currentUser.setIsActive(user.getIsActive());
 
 					List<Phone> listPhones = userPhoneRepository.findByUserId(user.getId());
 					if (!listPhones.isEmpty()) {
@@ -151,5 +144,4 @@ public class UserService {
 		userRepository.updateUserLastLogin(id, lastLogin);
 	}
 		
-
 }

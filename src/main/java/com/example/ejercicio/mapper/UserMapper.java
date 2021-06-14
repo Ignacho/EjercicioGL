@@ -1,12 +1,8 @@
 package com.example.ejercicio.mapper;
 
-import java.sql.Timestamp;
-
-import org.springframework.stereotype.Component;
-
-import com.example.ejercicio.domain.AuthRequest;
 import com.example.ejercicio.domain.User;
 import com.example.ejercicio.dto.UserResponseDTO;
+import org.springframework.stereotype.Component;
 
 /**
  * Mapper encargado de construir el UserResponseDTO.
@@ -25,20 +21,9 @@ public class UserMapper {
 		userResponseDTO.setModifier(user.getModifier());
 		userResponseDTO.setLastLogin(user.getLastLogin());
 		userResponseDTO.setToken(user.getToken());
-		userResponseDTO.setIsActive(user.isActive());
+		userResponseDTO.setIsActive(user.getIsActive());
 
 		return userResponseDTO;
-	}
-
-	public User fromAuthRequestTOUser(AuthRequest authRequest, String token) {
-		User user = new User();
-		user.setPassword(authRequest.getPassword());
-		user.setEmail(authRequest.getEmail());
-		user.setToken(token);
-		user.setActive(true);
-		user.setLastLogin(new Timestamp(System.currentTimeMillis()));
-
-		return user;
 	}
 
 }

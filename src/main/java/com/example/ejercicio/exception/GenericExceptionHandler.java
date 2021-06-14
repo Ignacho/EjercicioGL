@@ -1,5 +1,8 @@
 package com.example.ejercicio.exception;
 
+import com.example.ejercicio.dto.ResponseDTO;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -7,10 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import com.example.ejercicio.dto.ResponseDTO;
-
-import io.jsonwebtoken.ExpiredJwtException;
 
 /**
  * Se encarga de nuclear el manejo de las excepciones de los endpoints en esta
@@ -34,7 +33,7 @@ public class GenericExceptionHandler {
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
 	public ResponseEntity<ResponseDTO> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
 		String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-		log.error(message, e);
+		e.getBindingResult().getAllErrors().forEach(error -> log.error(error.getDefaultMessage()));
 		return new ResponseEntity<>(new ResponseDTO(message), HttpStatus.BAD_REQUEST);
 	}
 
@@ -51,5 +50,13 @@ public class GenericExceptionHandler {
 		log.error(message, e);
 		return new ResponseEntity<>(new ResponseDTO(message), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+	@ExceptionHandler({ MalformedJwtException.class })
+	public ResponseEntity<ResponseDTO> MalformedJwtException(MalformedJwtException e) {
+		String message = e.getMessage();
+		log.error(message, e);
+		return new ResponseEntity<>(new ResponseDTO(message), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
 
 }
